@@ -1,0 +1,27 @@
+rgamma.ar <- function(n, shape, scale=1) {
+  s <- shape
+  s.int <- floor(s)
+  b <- s / s.int
+  M <- gamma(s.int) / gamma(s) * b**s.int * (s * exp(-1))**(s - s.int)
+  f <- function(y) dgamma(y, shape=s)
+  Mg <- function(y) M * dgamma(y, shape=s.int, rate=1 / b)
+  acpt <- 0
+  total <- 0
+  4
+  X <- numeric(n)
+  while(acpt < n) {
+    total <- total + 1
+    Y <- sum(-b * log(runif(s.int)))
+    if(runif(1) <= f(Y) / Mg(Y)) {
+      acpt <- acpt + 1
+      X[acpt] <- Y
+    }
+  }
+  return(list(X=scale * X, rate.true=1 / M, rate.obs=acpt / total))
+}
+
+o <- rgamma.ar(100000, shape=5.5)
+print(o[-1])
+ylim <- c(0, 1.05 * dgamma(4.5, shape=5.5))
+hist(o$X, freq=FALSE, col="gray", border="white",breaks=50, xlab="x", ylim=ylim, main="")
+curve(dgamma(x, shape=5.5), add=TRUE)
