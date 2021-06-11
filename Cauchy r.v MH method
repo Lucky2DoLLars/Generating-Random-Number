@@ -1,0 +1,39 @@
+set.seed(1)
+
+l_par <- 0
+s_par <- 1
+  
+n.sim <- 100000
+X <- NULL
+ac <- NULL
+X[1] <- rnorm(1)
+ac[1] <- 1
+
+for (i in 2:n.sim)
+{
+  Y <- rnorm(1)
+  rho <- min(1,(dcauchy(Y,l_par,s_par)*dnorm(X[i-1]))/(dcauchy(X[i-1],l_par,s_par)*dnorm(Y)))
+  ac[i] <- runif(1) < rho
+  if ( ac[i] == 1){
+    X[i] = Y
+  }else{
+    X[i] = X[i-1]
+  }
+}
+
+X = X[-(1:5000)]
+
+
+
+# distribution test
+
+obj <- ks.test(jitter(X), rnorm(length(X), l_par, s_par))
+print(obj)
+
+
+hist(X, probability = T, breaks = 70, main = "MH algoritghm")
+lines(seq(-5, 5, length = 1000), dcauchy(seq(-5, 5, length = 1000),
+                                         l_par, s_par), col = 2, lty = 2)
+
+
+acf(X, main = "MH Algorithm")
