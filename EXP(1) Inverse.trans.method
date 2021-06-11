@@ -1,0 +1,9 @@
+set.seed(11)
+
+n = 10000
+u = runif(n)
+z = -log(1-u)
+
+print(ks.test(z, rexp(n)))
+hist(z, main = "EXP(1) r.v generation", probability = TRUE, col = "light yellow")
+curve(dexp(x), add = TRUE, col = "blue", lwd = 2)
